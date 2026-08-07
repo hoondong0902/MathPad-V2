@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <title>MathPad V2 | iPad Math Study App</title>
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- 상단 -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-icon">∫</span>
+        <div>
+          <p class="eyebrow">고2 미적분 내신 훈련</p>
+          <h1>MathPad <span class="version-badge">V2</span></h1>
+        </div>
+      </div>
+
+      <button
+        id="themeButton"
+        class="icon-button"
+        type="button"
+        aria-label="다크모드 전환"
+      >
+        ◐
+      </button>
+    </header>
+
+    <!-- 오늘의 학습 -->
+    <section class="card hero">
+      <div class="hero-copy">
+        <span class="pill">오늘의 학습</span>
+        <h2>문제를 풀고, 바로 다음 문제로.</h2>
+        <p>
+          함수의 극한 · 함수의 연속 · 평균변화율 · 순간변화율 · 미분계수
+        </p>
+      </div>
+
+      <div class="stats-grid" aria-label="학습 통계">
+        <div class="stat">
+          <strong id="solvedCount">0</strong>
+          <span>푼 문제</span>
+        </div>
+
+        <div class="stat">
+          <strong id="correctCount">0</strong>
+          <span>정답</span>
+        </div>
+
+        <div class="stat">
+          <strong id="accuracyCount">0%</strong>
+          <span>정답률</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 출제 설정 -->
+    <section class="card controls">
+      <div class="control-grid">
+
+        <label class="control">
+          <span>단원</span>
+          <select id="topicSelect">
+            <option value="all">전체 범위</option>
+            <option value="극한">함수의 극한</option>
+            <option value="연속">함수의 연속</option>
+            <option value="변화율">평균·순간변화율</option>
+            <option value="미분">미분계수·도함수·접선</option>
+            <option value="도함수 활용">도함수의 활용</option>
+          </select>
+        </label>
+
+        <label class="control">
+          <span>난이도</span>
+          <select id="levelSelect">
+            <option value="all">전체</option>
+            <option value="3">내신</option>
+            <option value="4">고난도</option>
+            <option value="5">최상위</option>
+          </select>
+        </label>
+
+      </div>
+    </section>
+
+    <!-- 문제 + 풀이 연습장 -->
+    <div class="study-layout">
+      <div class="study-left">
+<section class="card problem-card">
+      <div class="problem-meta">
+        <div class="badges">
+          <span id="topicBadge" class="badge">함수의 극한</span>
+          <span id="levelBadge" class="badge badge-muted">고난도</span>
+        </div>
+
+        <span id="problemIndex" class="problem-index">문제 1</span>
+      </div>
+
+      <h2 id="problemTitle">문제</h2>
+
+      <div id="problemText" class="problem-text">
+        문제를 불러오는 중입니다.
+      </div>
+
+      <div class="answer-area">
+        <label for="answerInput">답 입력</label>
+
+        <div class="answer-row">
+          <input
+            id="answerInput"
+            type="text"
+            autocomplete="off"
+            inputmode="text"
+            placeholder="예: 3, -2/3"
+          />
+
+          <button id="submitButton" class="primary-button" type="button">
+            정답 확인
+          </button>
+        </div>
+
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </div>
+
+      <div class="problem-actions">
+        <button id="skipButton" type="button">⏭ 건너뛰기</button>
+        <button id="solutionButton" type="button">📖 풀이 보기</button>
+        <button id="favoriteButton" type="button">☆ 저장</button>
+      </div>
+    </section>
+      </div>
+      <div class="study-right">
+<section class="card workspace-card">
+      <div class="workspace-header">
+        <div>
+          <h2>✍️ 풀이 연습장</h2>
+          <p>손가락 또는 Apple Pencil로 직접 풀이하세요. · Apple Pencil 권장</p>
+        </div>
+
+        <div class="tool-buttons">
+          <button id="penButton" class="tool-button active" type="button">
+            펜
+          </button>
+
+          <button id="eraserButton" class="tool-button" type="button">
+            지우개
+          </button>
+
+          <button id="undoButton" class="tool-button" type="button">↶</button>
+          <button id="redoButton" class="tool-button" type="button">↷</button>
+          <button id="touchModeButton" class="tool-button" type="button">펜 전용</button>
+          <button id="clearButton" class="tool-button" type="button">전체 지우기</button>
+        </div>
+      </div>
+
+      <div id="scratchpadWrap" class="scratchpad-wrap" aria-label="수학 풀이 필기 공간">
+        <canvas id="scratchpad" class="scratchpad-canvas"></canvas>
+        <div id="palmShield" class="palm-shield" aria-hidden="true"></div>
+      </div>
+    </section>
+      </div>
+    </div>
+
+    <!-- 해설 -->
+    <section id="solutionPanel" class="card solution-card hidden">
+      <div class="solution-header">
+        <h2>해설</h2>
+
+        <button
+          id="closeSolutionButton"
+          class="icon-button"
+          type="button"
+          aria-label="해설 닫기"
+        >
+          ×
+        </button>
+      </div>
+
+      <div id="solutionText" class="solution-text"></div>
+
+      <div class="answer-key">
+        정답:
+        <strong id="answerKey"></strong>
+      </div>
+    </section>
+
+    <!-- 다음 문제 -->
+    <div class="bottom-action">
+      <button id="nextButton" class="primary-button large-button" type="button">
+        다음 문제 →
+      </button>
+    </div>
+
+  </div>
+
+  <!-- 문제 데이터 -->
+<!-- 앱 기능 -->
+
+  <script src="./data/limits.js"></script>
+  <script src="./data/continuity.js"></script>
+  <script src="./data/rate_derivative.js"></script>
+  <script src="./data/application.js"></script>
+  <script src="./data/index.js"></script>
+  <script src="./pencil.js"></script>
+  <script src="./app.js"></script>
+
+</body>
+</html>

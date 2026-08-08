@@ -46,7 +46,40 @@ function formatMathQuestion(q){
   };
 
   const lines = s.split("\n");
+const derivativeMatch = s.match(
+  /^f\(x\)=(.+?)일 때,\s*lim\(h→0\)\[(.+?)\]\/h의 값을 구하여라\.$/
+);
 
+if(derivativeMatch){
+  const fx = convertMath(derivativeMatch[1]);
+  const numerator = convertMath(derivativeMatch[2]);
+
+return `
+  <div style="text-align:center;margin:8px 0 14px;">
+    <span style="font-size:1.25em;">
+      f(x) = ${derivativeMatch[1]}
+    </span>
+  </div>
+
+  <div style="text-align:center;margin:8px 0 14px;">
+    일 때, 다음 값을 구하여라.
+  </div>
+
+  <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin:14px 0;white-space:nowrap;">
+    <span style="display:inline-flex;flex-direction:column;align-items:center;line-height:1;">
+      <span style="font-size:1.15em;">lim</span>
+      <span style="font-size:0.65em;">h→0</span>
+    </span>
+
+    <span style="display:inline-flex;flex-direction:column;align-items:center;">
+      <span style="border-bottom:1.5px solid currentColor;padding:0 6px 4px;">
+        ${derivativeMatch[2]}
+      </span>
+      <span style="padding-top:4px;">h</span>
+    </span>
+  </div>
+`;  
+}
   if (
     lines.length >= 3 &&
     lines[0].includes("f(x)=") &&

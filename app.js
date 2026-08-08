@@ -62,16 +62,19 @@ function formatMathQuestion(q){
     if(m1 && m2){
       const rest = lines.slice(3).join("<br>");
 
-      return `
-        \$begin:math:display$
-        f\(x\)\=
-        \\\\begin\{cases\}
-        \$\{convertMath\(m1\[1\]\)\} \& \$\{m1\[2\]\} \\\\\\\\
-        \$\{convertMath\(m2\[1\]\)\} \& \$\{m2\[2\]\}
-        \\\\end\{cases\}
-        \\$end:math:display$
-        ${rest ? `<div>${rest}</div>` : ""}
-      `;
+    return `
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;">
+    <span style="font-size:1.15em;">f(x) =</span>
+    <span style="font-size:3.2em;font-weight:300;line-height:1;">{</span>
+    <div style="display:grid;grid-template-columns:auto auto;gap:7px 18px;text-align:left;">
+      <span>${m1[1]}</span>
+      <span>(${m1[2]})</span>
+      <span>${m2[1]}</span>
+      <span>(${m2[2]})</span>
+    </div>
+  </div>
+  ${rest ? `<div>${rest}</div>` : ""}
+`;
     }
   }
 

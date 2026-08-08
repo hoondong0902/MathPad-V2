@@ -25,12 +25,43 @@ function renderStats(){
   if($("correctCount")) $("correctCount").textContent=state.correct;
   if($("accuracyCount")) $("accuracyCount").textContent=state.solved?Math.round(state.correct/state.solved*100)+"%":"0%";
 }
-function showProblem(i=currentIndex){
+  function formatMathQuestion(q){
+  let s = String(q || "");
+
+  const convertMath = text => {
+    let x = text;
+
+    x = x.replace(/lim\(x→∞\)/g, "\\lim_{x\\to\\infty}");
+    x = x.replace(/lim\(x→([^)]+)\)/g, "\\lim_{x\\to $1}");
+    x = x.replace(/²/g, "^2");
+    x = x.replace(/³/g, "^3");
+    x = x.replace(/√\(([^()]+)\)/g, "\\sqrt{$1}");
+
+    x = x.replace(
+      /\(([^()]+)\)\/\(([^()]+)\)/g,
+      "\\frac{$1}{$2}"
+    );
+
+    return x;
+  };
+
+  return s.split("\n").map(line => {
+    if (
+      line.includes("lim(") ||
+      /^[\s\dxyabfk+\-*/().²³√→∞=<>]+$/.test(line)
+    ){
+      return "\\[" + convertMath(line) + "\\]";
+    }
+
+    return `<div>${line}</div>`;
+  }).join("");
+}
+  function showProblem(i=currentIndex){
   if(!queue.length) buildQueue();
   if(i>=queue.length) i=0;
   currentIndex=i; current=queue[i]; hintIndex=0;
-  $("problemTitle").textContent=current.title;
-  $("problemText").textContent=current.question;
+  $("problemText").innerHTML=formatMathQuestion(current.question);
+if(window.MathJax?.typesetPromise) MathJax.typesetPromise([$("problemText")]);
   $("topicBadge").textContent=current.chapter;
   $("levelBadge").textContent=["","기본","보통","내신","고난도","최상위"][current.difficulty] || "고난도";
   $("problemIndex").textContent=`문제 ${i+1} / ${queue.length}`;

@@ -1,3 +1,4 @@
+document.write('<script src="./data/limits_new.js"></script>');
 window.MATHPAD_PROBLEMS = []
   .concat(window.MATHPAD_LIMITS || [])
   .concat(window.MATHPAD_CONTINUITY || [])

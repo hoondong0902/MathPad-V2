@@ -25,7 +25,7 @@ function renderStats(){
   if($("correctCount")) $("correctCount").textContent=state.correct;
   if($("accuracyCount")) $("accuracyCount").textContent=state.solved?Math.round(state.correct/state.solved*100)+"%":"0%";
 }
-  function formatMathQuestion(q){
+function formatMathQuestion(q){
   let s = String(q || "");
 
   const convertMath = text => {
@@ -45,17 +45,47 @@ function renderStats(){
     return x;
   };
 
-  return s.split("\n").map(line => {
+  const lines = s.split("\n");
+
+  if (
+    lines.length >= 3 &&
+    lines[0].includes("f(x)=") &&
+    /\(.+[<>≤≥].+\)/.test(lines[1]) &&
+    /\(.+[<>≤≥].+\)/.test(lines[2])
+  ){
+    const first = lines[1].trim();
+    const second = lines[2].trim();
+
+    const m1 = first.match(/^(.*?)\s+\((.*?)\)$/);
+    const m2 = second.match(/^(.*?)\s+\((.*?)\)$/);
+
+    if(m1 && m2){
+      const rest = lines.slice(3).join("<br>");
+
+      return `
+        \$begin:math:display$
+        f\(x\)\=
+        \\\\begin\{cases\}
+        \$\{convertMath\(m1\[1\]\)\} \& \$\{m1\[2\]\} \\\\\\\\
+        \$\{convertMath\(m2\[1\]\)\} \& \$\{m2\[2\]\}
+        \\\\end\{cases\}
+        \\$end:math:display$
+        ${rest ? `<div>${rest}</div>` : ""}
+      `;
+    }
+  }
+
+  return lines.map(line => {
     if (
       line.includes("lim(") ||
-      /^[\s\dxyabfk+\-*/().²³√→∞=<>]+$/.test(line)
+      /^[\s\dxyabfk+\-*/().²³√→∞=<>≤≥]+$/.test(line)
     ){
       return "\\[" + convertMath(line) + "\\]";
     }
 
     return `<div>${line}</div>`;
   }).join("");
-}
+}  
   function showProblem(i=currentIndex){
   if(!queue.length) buildQueue();
   if(i>=queue.length) i=0;
